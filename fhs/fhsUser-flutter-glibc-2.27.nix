@@ -21,10 +21,10 @@ let
     pango
     gdk_pixbuf
     glib # libgio?
-    # glib-networking
     epoxy 
     atk
     gtk3
+    "vscode-fhs"
   ];
   runScript = "bash";
 }).env
