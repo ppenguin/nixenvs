@@ -1,7 +1,8 @@
 let
   jupyter = import (builtins.fetchGit {
     url = https://github.com/tweag/jupyterWith;
-    rev = "0940c0d8ff3dbbae8395c138a89a57fd2cdb509c";
+    rev = "deaa6c66165fd1ebe8617a8f133ad45110ac659c";
+    # sha256="1gb0lbry4ch77dk7ararxhhbq7glib79kc45agzlc2632dfsl2pp";
   }) {};
 
   ihaskell = jupyter.kernels.iHaskellWith {

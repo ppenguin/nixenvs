@@ -19,5 +19,5 @@
     atk
     gtk3
   ];
-  runScript = "zsh";
+  runScript = "${pkgs.zsh}/bin/zsh";
 }).env
