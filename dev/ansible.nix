@@ -4,9 +4,9 @@ let
   myPy = with pkgs; (python310.withPackages (p: with p; [ pexpect ansible-core ansible-lint jmespath ]));
   myEnv = pkgs.buildEnv {
     name = "ansible-env";
-    paths = [ myPy zsh lsd  gnupg coreutils ];
+    paths = [ myPy ] ++ (with pkgs; [ ]);
   };
-  ansibleCollectionPath = pkgs.callPackage ../util/ansible-collections.nix {} myPkgs.pkgs.ansible-core {
+  ansibleCollectionPath = pkgs.callPackage ../util/ansible-collections.nix {} myPy.pkgs.ansible-core {
     "containers-podman" = {
         version = "1.9.3";
         sha256 = "sha256:1vjsm7696fp9av7708h05zjjdil7gwcqiv6mrz7vzmnnwdnqshp7";
@@ -15,7 +15,7 @@ let
 in
 
 pkgs.mkShell {
-  buildInputs = [ myEnv ];
+  nativeBuildInputs = [ myEnv ];
   shellHook = ''
     export ANSIBLE_COLLECTIONS_PATHS="${ansibleCollectionPath}"
     ### are the below still necessary?
