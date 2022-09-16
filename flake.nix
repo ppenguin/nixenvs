@@ -12,7 +12,8 @@
                 devShells.default = import ./dev/test.nix { inherit pkgs; };
                 devShells.run-jupyter = import ./run/jupyter.nix { inherit pkgs; };
                 devShells.dev-fhs-simple = import ./dev/fhs-simple.nix { inherit pkgs; };
-                devShells.dev-ansible = import ./dev/fhs-simple.nix { inherit pkgs; };
+                devShells.dev-ansible = import ./dev/ansible.nix { inherit pkgs; };
+                dev-ansible = (import ./dev/ansible.nix { inherit pkgs; }).env;
             }
         );
 }

@@ -1,10 +1,10 @@
 { pkgs ? import <nixpkgs> {} }:
 
 let
-  myPkgs = with pkgs; (python310.withPackages (p: with p; [ pexpect ansible-core ansible-lint jmespath ]));
+  myPy = with pkgs; (python310.withPackages (p: with p; [ pexpect ansible-core ansible-lint jmespath ]));
   myEnv = pkgs.buildEnv {
     name = "ansible-env";
-    paths = [ myPkgs ];
+    paths = [ myPy zsh lsd  gnupg coreutils ];
   };
   ansibleCollectionPath = pkgs.callPackage ../util/ansible-collections.nix {} myPkgs.pkgs.ansible-core {
     "containers-podman" = {
@@ -15,7 +15,7 @@ let
 in
 
 pkgs.mkShell {
-  nativeBuildInputs = [ myEnv ];
+  buildInputs = [ myEnv ];
   shellHook = ''
     export ANSIBLE_COLLECTIONS_PATHS="${ansibleCollectionPath}"
     ### are the below still necessary?
