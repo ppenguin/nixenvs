@@ -38,7 +38,7 @@
                     # more devshells
                     {
                         test = import ./dev/test.nix { inherit pkgs; };
-                        run-jupyter = import ./run/jupyter.nix { inherit pkgs; };
+                        # run-jupyter = import ./run/jupyter.nix { inherit pkgs; }; # FIXME: .nix broken
                         dev-fhs-simple = import ./dev/fhs-simple.nix { inherit pkgs; };
                     };
 
