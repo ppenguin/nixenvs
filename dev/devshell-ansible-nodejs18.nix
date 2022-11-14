@@ -14,7 +14,7 @@ in
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    gnumake nodejs-16_x
+    gnumake nodejs-18_x
   ] ++ pypkgs
    ++ (with pkgs.nodePackages; [
     yarn

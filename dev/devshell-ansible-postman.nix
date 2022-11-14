@@ -18,6 +18,5 @@ pkgs.mkShell {
   ] ++ pypkgs;
   shellHook = ''
     export ANSIBLE_COLLECTIONS_PATHS="${ansibleCollectionPath}"
-    export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
   '';
 }
