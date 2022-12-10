@@ -16,12 +16,27 @@ let
   md2pdf-script = (pkgs.writeScriptBin "md2pdf" ''
     #!/usr/bin/env bash
 
+    auto_open() {
+      case "$(uname -s)" in
+        Darwin)
+          open "$1"
+          ;;
+        Linux)
+          xdg-open "$1" >/dev/null 2>&1 &
+          ;;
+        default)
+          >&2 echo "ERROR: auto open not supported on this system ($(uname -s))"
+          ;;
+      esac
+    }
+
     for F in "$@"; do
         OFILE="$(sed -rn 's/^(.*)(\.md)$/\1.pdf/p' <<<"$F")"
         [[ -f "$OFILE" ]] && mv "$OFILE" "$OFILE".bak
-        set -x
+        # set -x
         ${rbwpkgs.out}/bin/pandocomatic -b -c ~/.pandoc/pandocomatic/pandocomatic.yaml -o "$OFILE" "$F" 1>&2 && echo "$OFILE"
-        set +x
+        if [ -n "$AUTOPEN" ]; then auto_open "$OFILE"; fi
+        # set +x
     done
   '').out;
 
@@ -33,6 +48,7 @@ pkgs.mkShell {
     (texlive.combine { inherit (texlive)
         scheme-small fontspec
         xcolor koma-script nth marvosym fontawesome multirow placeins enumitem tcolorbox # used by 1nnovatio* templates
+        octavo lettrine minifp niceframe dingbat parselines # more latex classes used by some JV templates
         lualatex-math environ lastpage titlesec advdate
         footnotebackref selnolig csquotes mdframed zref needspace titling mlmodern tex-gyre fvextra # used by eisvogel.tex template
         svg # for diagram-generator.lua
