@@ -32,7 +32,9 @@ let
 
     for F in "$@"; do
         OFILE="$(sed -rn 's/^(.*)(\.md)$/\1.pdf/p' <<<"$F")"
-        [[ -f "$OFILE" ]] && mv "$OFILE" "$OFILE".bak
+        if [ -f "$OFILE" ] && [ -n "$PDFBAK" ]; then
+          mv "$OFILE" "$OFILE".bak
+        fi
         # set -x
         ${rbwpkgs.out}/bin/pandocomatic -b -c ~/.pandoc/pandocomatic/pandocomatic.yaml -o "$OFILE" "$F" 1>&2 && echo "$OFILE"
         if [ -n "$AUTOPEN" ]; then auto_open "$OFILE"; fi
