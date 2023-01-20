@@ -50,7 +50,7 @@ pkgs.mkShell {
     (texlive.combine { inherit (texlive)
         scheme-small fontspec
         xcolor koma-script nth marvosym fontawesome multirow placeins enumitem tcolorbox # used by 1nnovatio* templates
-        octavo lettrine minifp niceframe dingbat parselines # more latex classes used by some JV templates
+        octavo lettrine minifp niceframe dingbat parselines lm # more latex classes used by some JV templates
         lualatex-math environ lastpage titlesec advdate
         footnotebackref selnolig csquotes mdframed zref needspace titling mlmodern tex-gyre fvextra # used by eisvogel.tex template
         svg # for diagram-generator.lua
