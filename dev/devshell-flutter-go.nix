@@ -1,37 +1,52 @@
-{
-    pkgs ? import <nixpkgs> {}
-    ,unstable ? import <unstable> {}
+{ pkgs ? import <nixpkgs> {}
+, unstable ? import <unstable> {}
 }:
 # !!! if using unstable, use it for all pkgs, otherwise library errors during build!
 let
-  epoxy = unstable.libepoxy;
-  clang = unstable.clang;
-in
-pkgs.mkShell {
-  buildInputs = with unstable; [
+  inherit (pkgs) lib;
+  # clang = unstable.clang_14;
+  libs = with unstable; [
     at-spi2-core.dev
     dbus.dev
     gtk3
     libdatrie
     libselinux
+    libepoxy
     libsepol
     libthai
     libxkbcommon
-    pcre pcre2
-    pkg-config
+    pcre
+    pcre2
     util-linux.dev
+    xorg.libX11.dev
     xorg.libXdmcp
     xorg.libXtst
+    libappindicator.dev
+  ] ++ [ (unstable.callPackage ../pkgs/libdeflate {}) ];
+in
+(pkgs.mkShell.override { stdenv = unstable.llvmPackages_14.stdenv; }) {
+  nativeBuildInputs = with unstable; [
+    gtk3
+    xorg.libX11.dev
+    pkg-config
     ninja
     cmake
     dart
     flutter
     go_1_18
-  ]
-  ++ [ epoxy clang ];
+  ];
+
+  buildInputs = libs;
+
+  # ++
+  # (with unstable.llvmPackages_14; [
+  #   bintools
+  #   clangUseLLVM
+  # ]);
   shellHook = ''
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${epoxy}/lib
-    CC=${clang}/bin/clang
-    CXX=${clang}/bin/clang++
+    LD_LIBRARY_PATH=${lib.makeLibraryPath libs}
+    LD=lld
+    # CC=clang
+    # CXX=clang++
   '';
 }
