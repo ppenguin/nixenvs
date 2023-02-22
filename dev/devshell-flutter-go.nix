@@ -4,49 +4,47 @@
 # !!! if using unstable, use it for all pkgs, otherwise library errors during build!
 let
   inherit (pkgs) lib;
-  # clang = unstable.clang_14;
+  libdeflate = unstable.callPackage ../pkgs/libdeflate {};
+  libepoxy = unstable.libepoxy;
+  myllvm = unstable.llvmPackages_14;
+
   libs = with unstable; [
-    at-spi2-core.dev
+    atk at-spi2-core.dev
     dbus.dev
     gtk3
+    pango cairo harfbuzz gdk-pixbuf glib # these are transitive but explicit here for the LD_LIBRARY_PATH
+    fontconfig
     libdatrie
-    libselinux
-    libepoxy
-    libsepol
+    libselinux libsepol pcre
     libthai
     libxkbcommon
-    pcre
     pcre2
     util-linux.dev
-    xorg.libX11.dev
-    xorg.libXdmcp
-    xorg.libXtst
+    xorg.libX11.dev xorg.libXdmcp xorg.libXtst
     libappindicator.dev
-  ] ++ [ (unstable.callPackage ../pkgs/libdeflate {}) ];
+  ] ++ [
+    libepoxy
+    libdeflate
+  ];
 in
-(pkgs.mkShell.override { stdenv = unstable.llvmPackages_14.stdenv; }) {
+(unstable.mkShell.override { stdenv = myllvm.stdenv; }) {
   nativeBuildInputs = with unstable; [
-    gtk3
-    xorg.libX11.dev
     pkg-config
     ninja
     cmake
     dart
     flutter
     go_1_18
+  ] ++ [
+    myllvm.bintools # https://matklad.github.io/2022/03/14/rpath-or-why-lld-doesnt-work-on-nixos.html
   ];
 
-  buildInputs = libs;
+  buildInputs = libs ++ (with myllvm; [
+    libcxxClang
+    libunwind
+  ]);
 
-  # ++
-  # (with unstable.llvmPackages_14; [
-  #   bintools
-  #   clangUseLLVM
-  # ]);
   shellHook = ''
-    LD_LIBRARY_PATH=${lib.makeLibraryPath libs}
-    LD=lld
-    # CC=clang
-    # CXX=clang++
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${lib.makeLibraryPath [ libepoxy ]}
   '';
 }
