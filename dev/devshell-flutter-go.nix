@@ -22,6 +22,10 @@ let
     util-linux.dev
     xorg.libX11.dev xorg.libXdmcp xorg.libXtst
     libappindicator.dev
+    libsecret.dev
+    libgcrypt.dev
+    jsoncpp.dev
+    libgpg-error.dev
   ] ++ [
     libepoxy
     libdeflate
