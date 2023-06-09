@@ -9,6 +9,7 @@ let
       glib.out glib.dev gtk3.dev gdk-pixbuf.dev pango.dev cairo.dev harfbuzz.dev atk.dev
       libsoup.dev webkitgtk.dev
       zlib.out zlib.dev
+      wayland.dev
     ] ;
   };
 in
