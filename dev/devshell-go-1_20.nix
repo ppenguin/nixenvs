@@ -6,7 +6,7 @@
 pkgs.mkShell {
   buildInputs = with pkgs; [
     gnumake
-    go gopls delve
+    go_1_20 gopls delve
   ];
   # shellHook = ''
   # '';

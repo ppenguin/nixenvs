@@ -1,12 +1,20 @@
 {
     description = "ppenguin's nix dev shells";
 
-    inputs.flake-utils.url = "github:numtide/flake-utils";
+    inputs = {
+        nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+        nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+        flake-utils = {
+            url = "github:numtide/flake-utils";
+            inputs.nixpkgs.follows = "nixpkgs-unstable";
+        };
+    };
 
-    outputs = { self, nixpkgs, flake-utils }:
+    outputs = { self, nixpkgs, nixpkgs-unstable, flake-utils }:
         flake-utils.lib.eachDefaultSystem (system:
             let
                 pkgs = nixpkgs.legacyPackages.${system};
+                unstable = (import nixpkgs-unstable { inherit (pkgs) config; });
                 inherit (pkgs) lib;
 
                 getnixes = dir: prefix: (with builtins;
@@ -26,7 +34,7 @@
                         (map (s:
                             (lib.removeSuffix ".nix" (lib.removePrefix prefix s))
                         ) (getnixes dir prefix))
-                            (n: (import (dir + "/${prefix}${n}.nix") { inherit pkgs; }))
+                            (n: (import (dir + "/${prefix}${n}.nix") { inherit pkgs unstable; }))
                 );
 
             in {
