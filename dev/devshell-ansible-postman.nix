@@ -5,7 +5,7 @@
 let
   py = pkgs.python310;
   # below implies python interpreter itself, do not separately specify!
-  pypkgs = [ (py.withPackages (p: with p; [ pexpect ansible-core jmespath ansible-lint ]))];
+  pypkgs = [ (py.withPackages (p: with p; [ pexpect ansible-core jmespath ]))];
   ansibleCollectionPath = pkgs.callPackage ./lib/ansible-collections.nix {} pkgs.ansible {
     "containers-podman" = {
         version = "1.9.4";
@@ -17,6 +17,7 @@ in
 pkgs.mkShell {
   buildInputs = with pkgs; [
     postman
+    ansible-lint
   ] ++ pypkgs;
   shellHook = ''
     export ANSIBLE_COLLECTIONS_PATHS="${ansibleCollectionPath}"
