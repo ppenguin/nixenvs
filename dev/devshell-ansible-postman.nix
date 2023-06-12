@@ -1,4 +1,6 @@
-{ pkgs ? import <nixpkgs> { config.allowUnfree = true;  config.documentation = { man.enable = false; doc.enable = false; info.enable = false; }; } }:
+{ pkgs ? import <nixpkgs> { config.allowUnfree = true;  config.documentation = { man.enable = false; doc.enable = false; info.enable = false; }; }
+, unstable ? import <unstable> { config.allowUnfree = true;  config.documentation = { man.enable = false; doc.enable = false; info.enable = false; }; }
+}:
 
 let
   py = pkgs.python310;
