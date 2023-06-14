@@ -4,6 +4,7 @@
 }:
 
 pkgs.mkShell {
+  hardeningDisable = [ "fortify" ];
   buildInputs = with pkgs; [
     gnumake
     go_1_20 gopls delve
