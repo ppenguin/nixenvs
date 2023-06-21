@@ -5,7 +5,7 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    gnumake mono nodejs-18_x
+    gnumake mono nodejs-18_x yarn
     sqlite
   ] ++ (with unstable; [
     go_1_19 gopls
