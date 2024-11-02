@@ -18,7 +18,10 @@
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [(import ./overlay.nix)];
+        };
         unstable = import nixpkgs-unstable {inherit (pkgs) config;};
         inherit (pkgs) lib;
 
