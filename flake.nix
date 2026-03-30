@@ -27,7 +27,11 @@
           inherit system;
           overlays = [(import ./overlay.nix)];
         };
-        unstable = import nixpkgs-unstable {inherit (pkgs) config;};
+        unstable = import nixpkgs-unstable {
+          inherit (pkgs) config;
+          inherit system;
+          overlays = [(import ./overlay.nix)];
+        };
         inherit (pkgs) lib;
 
         getnixes = dir: prefix:
