@@ -9,6 +9,7 @@ pkgs.mkShell {
     hurl
     gnumake
     babashka # bb for experimental clojure scripting (first class json processing)
+    postgresql # for psql
   ];
   # shellHook = ''
   # '';
