@@ -1,7 +1,4 @@
-{ pkgs ? import <nixpkgs> { }
-, unstable ? import <unstable> { }
-}:
-
+{pkgs ? import <nixpkgs> {}}:
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
     python310Packages.python

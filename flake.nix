@@ -2,30 +2,35 @@
   description = "ppenguin's nix dev shells";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-      # inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = {
-    self,
+  outputs = inputs @ {
+    flake-parts,
     nixpkgs,
     nixpkgs-unstable,
-    flake-utils,
+    ...
   }:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+
+      perSystem = {system, ...}: let
         pkgs = import nixpkgs {
+          config.allowUnfree = true;
           inherit system;
           overlays = [(import ./overlay.nix)];
         };
         unstable = import nixpkgs-unstable {inherit (pkgs) config;};
         inherit (pkgs) lib;
 
-        getnixes = dir: prefix: (
+        getnixes = dir: prefix:
           with builtins;
             lib.attrNames
             (lib.filterAttrs (
@@ -33,41 +38,38 @@
                 v
                 == "regular"
                 && (
-                  all (e: e)
-                  (
-                    map (pfun: pfun (baseNameOf n))
-                    [(lib.hasPrefix prefix) (lib.hasSuffix ".nix")]
-                  )
+                  lib.all (e: e)
+                  (map (pfun: pfun (baseNameOf n))
+                    [(lib.hasPrefix prefix) (lib.hasSuffix ".nix")])
                 )
-            ) (readDir dir))
-        );
+            ) (readDir dir));
 
-        genshells = dir: prefix: (
-          with builtins;
-            lib.genAttrs
-            (map (
-              s: (lib.removeSuffix ".nix" (lib.removePrefix prefix s))
-            ) (getnixes dir prefix))
-            (n: (import (dir + "/${prefix}${n}.nix") {inherit pkgs unstable;}))
-        );
+        genshells = dir: prefix:
+          lib.genAttrs
+          (map (s: lib.removeSuffix ".nix" (lib.removePrefix prefix s))
+            (getnixes dir prefix))
+          (n: import (dir + "/${prefix}${n}.nix") {inherit pkgs;});
+
+        genshells-unstable = dir: prefix:
+          lib.mapAttrs'
+          (n: v: lib.nameValuePair "${n}-unstable" v)
+          (lib.genAttrs
+            (map (s: lib.removeSuffix ".nix" (lib.removePrefix prefix s))
+              (getnixes dir prefix))
+            (n: import (dir + "/${prefix}${n}.nix") {pkgs = unstable;}));
       in {
-        # run-shells:
-        testshell = import ./dev/test.nix {inherit pkgs;};
-
-        # devshells generated from ./dev
+        # devshells generated from ./dev plus extras
         devShells =
           (genshells ./dev "devshell-")
-          //
-          # more devshells
-          {
+          // (genshells-unstable ./dev "devshell-")
+          // {
             test = import ./dev/test.nix {inherit pkgs;};
-            # run-jupyter = import ./run/jupyter.nix { inherit pkgs; }; # FIXME: .nix broken
-            dev-fhs-simple = import ./dev/fhs-simple.nix {inherit pkgs unstable;};
+            default = import ./dev/test.nix {inherit pkgs;}; # flake-parts expects a `default` — adjust as needed
+            dev-fhs-simple = import ./dev/fhs-simple.nix {inherit pkgs;};
           };
 
-        # test function
-        getnixes = getnixes;
-      }
-    );
+        # expose getnixes as a package-level passthru via legacyPackages
+        legacyPackages.getnixes = getnixes;
+      };
+    };
 }
-
