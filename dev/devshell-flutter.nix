@@ -13,7 +13,7 @@ in
         libsepol
         libthai
         libxkbcommon
-        pcre
+        pcre2
         pkg-config
         util-linux.dev
         xorg.libXdmcp
