@@ -19,7 +19,6 @@
       libdatrie
       libselinux
       libsepol
-      pcre
       libthai
       libxkbcommon
       pcre2

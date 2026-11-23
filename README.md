@@ -23,3 +23,11 @@ Of course you can also add an unstable input to the flake.
 # Contributing
 
 While it's easiest to just fork and adapt to your needs, I'd be happy to take pull requests for your *generic* extensions. I.e. any "not-too-specific" things that might benefit others and likely work on most other systems.
+
+## Plotting / Jupyter
+
+Jupyter labs (plotly, altair, holoviz) + hot-reload servers (panel, marimo): see [run/jupyter](./run/jupyter/README.md).
+
+```sh
+nix run github:ppenguin/nixenvs#jupyter-plots
+```

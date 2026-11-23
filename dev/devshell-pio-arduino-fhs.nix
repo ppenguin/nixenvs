@@ -8,7 +8,7 @@
   #   paths = [ pkgs.zsh ];
   # };
 in
-  (pkgs.buildFHSUserEnv {
+  (pkgs.buildFHSEnv {
     name = envname;
     targetPkgs = pkgs: (with pkgs; [
       arduino-cli
